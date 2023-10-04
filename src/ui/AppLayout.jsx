@@ -1,12 +1,19 @@
 import { Outlet } from "react-router-dom";
 import SideBar from "./SideBar";
 import Header from "./Header";
-import { styled } from "styled-components";
+import { ThemeContext, styled } from "styled-components";
+import { useContext } from "react";
+import { useDarkMode } from "../Contexts/DarkModeContext";
 
 const Main = styled.main`
   background-color: var(--color-grey-50);
   padding: 4rem 4.8rem 6.4rem;
   overflow: scroll;
+  -ms-overflow-style: none; // IE 10+
+  scrollbar-width: none; // Firefox
+  &::-webkit-scrollbar {
+    display: none; // Safari and Chrome
+  }
 `;
 const StyledAppLayout = styled.div`
   display: grid;

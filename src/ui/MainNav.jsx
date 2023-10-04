@@ -7,7 +7,6 @@ import {
   HiOutlineHomeModern,
   HiOutlineUsers,
 } from "react-icons/hi2";
-import { BASE_URL } from "../utils/Constants";
 
 const NavList = styled.ul`
   display: flex;
@@ -59,28 +58,23 @@ function MainNav() {
     <nav>
       <NavList>
         <li>
-          <StyledNavLink to={`${BASE_URL}dashboard`}>
+          <StyledNavLink to={`/dashboard`}>
             <HiOutlineHome />
             Home
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to={`${BASE_URL}bookings`}>
+          <StyledNavLink to={`/bookings`}>
             <HiOutlineCalendarDays /> Bookings
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to={`${BASE_URL}cabins`}>
+          <StyledNavLink to={`/cabins`}>
             <HiOutlineHomeModern /> Cabins
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to={`${BASE_URL}users`}>
-            <HiOutlineUsers /> Users
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to={`${BASE_URL}settings`}>
+          <StyledNavLink to={`/settings`}>
             <HiOutlineCog6Tooth /> Settings
           </StyledNavLink>
         </li>

@@ -11,7 +11,6 @@ import ButtonText from "../../ui/ButtonText";
 import { useMoveBack } from "../../hooks/useMoveBack";
 import { useBooking } from "./useBooking";
 import Spinner from "../../ui/Spinner";
-import { BASE_URL } from "../../utils/Constants";
 import { useNavigate } from "react-router-dom";
 import { useCheckOut } from "../check-in-out/useCheckOut";
 import { HiArrowUpOnSquare } from "react-icons/hi2";
@@ -19,6 +18,7 @@ import { useState } from "react";
 import { useDeleteBooking } from "./useDeleteBooking";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
+import Empty from "../../ui/Empty";
 const HeadingGroup = styled.div`
   display: flex;
   gap: 2.4rem;
@@ -39,6 +39,7 @@ function BookingDetail() {
     "checked-out": "silver",
   };
   if (isLoading) return <Spinner />;
+  if (!booking) return <Empty resource="booking" />;
   return (
     <>
       <Row type="horizontal">
@@ -73,7 +74,7 @@ function BookingDetail() {
         {status === `unconfirmed` && (
           <Button
             variation="primary"
-            onClick={() => navigate(`${BASE_URL}checkin/${bookingId}`)}
+            onClick={() => navigate(`/checkin/${bookingId}`)}
           >
             Check-In
           </Button>

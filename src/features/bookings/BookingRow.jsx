@@ -17,7 +17,6 @@ import ConfirmDelete from "../../ui/ConfirmDelete";
 import { formatCurrency } from "../../utils/helpers";
 import { formatDistanceFromNow } from "../../utils/helpers";
 import Menus from "../../ui/Menus";
-import { BASE_URL } from "../../utils/Constants";
 import Modal from "../../ui/Modal";
 import { useDeleteBooking } from "./useDeleteBooking";
 import Spinner from "../../ui/Spinner";
@@ -111,14 +110,14 @@ function BookingRow({
         <Menus.List id={bookingId}>
           <Menus.Button
             icon={<HiEye />}
-            onClick={() => navigate(`${BASE_URL}bookings/${bookingId}`)}
+            onClick={() => navigate(`/bookings/${bookingId}`)}
           >
             Details
           </Menus.Button>
           {status === `unconfirmed` && (
             <Menus.Button
               icon={<HiArrowDownOnSquare />}
-              onClick={() => navigate(`${BASE_URL}checkin/${bookingId}`)}
+              onClick={() => navigate(`/checkin/${bookingId}`)}
             >
               Check-In
             </Menus.Button>
