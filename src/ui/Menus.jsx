@@ -34,6 +34,7 @@ const StyledList = styled.ul`
   background-color: var(--color-grey-0);
   box-shadow: var(--shadow-md);
   border-radius: var(--border-radius-md);
+  width: max-content;
 
   right: 32px;
   top: 0;
@@ -62,9 +63,7 @@ const StyledButton = styled.button`
     transition: all 0.3s;
   }
 `;
-const Span = styled.span`
-  width: 8rem;
-`;
+
 const MenusContext = createContext();
 function Menus({ children }) {
   const [openId, setOpenId] = useState(``);
@@ -107,7 +106,7 @@ function Button({ children, icon, disabled = false, onClick }) {
     <li>
       <StyledButton onClick={handleClick} disabled={disabled}>
         {icon}
-        <Span>{children}</Span>
+        <span>{children}</span>
       </StyledButton>
     </li>
   );

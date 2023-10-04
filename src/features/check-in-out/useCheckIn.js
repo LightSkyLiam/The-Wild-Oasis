@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateBooking } from "../../services/apiBookings";
 import toast from "react-hot-toast";
-import { BASE_URL } from "../../utils/Constants";
 import { useNavigate } from "react-router-dom";
 
 export const useCheckIn = () => {
@@ -19,7 +18,7 @@ export const useCheckIn = () => {
     onSuccess: (data) => {
       toast.success(`Booking ${data.id} has successfuly checked In`);
       queryClient.invalidateQueries({ active: true });
-      navigate(`${BASE_URL}dashboard`);
+      navigate(`/dashboard`);
     },
     onError: () => toast.error(`There Was An Error Checking In`),
   });
