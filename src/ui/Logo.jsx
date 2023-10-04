@@ -26,5 +26,5 @@ function Logo() {
     </StyledLogo>
   );
 }
-//
+
 export default Logo;
