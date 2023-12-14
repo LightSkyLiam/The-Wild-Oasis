@@ -19,6 +19,11 @@ import { useDeleteBooking } from "./useDeleteBooking";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import Empty from "../../ui/Empty";
+import BookingInfoForm from "./BookingInfoForm";
+import { useUpdateBooking } from "./useUpdateBooking";
+import { useUpdateGuest } from "../guests/useUpdateGuest";
+import GuestInfoForm from "../guests/GuestInfoForm";
+
 const HeadingGroup = styled.div`
   display: flex;
   gap: 2.4rem;
@@ -26,7 +31,7 @@ const HeadingGroup = styled.div`
 `;
 
 function BookingDetail() {
-  const { booking, isLoading } = useBooking();
+  const { booking, isLoading, isFetching } = useBooking();
   const { status, id: bookingId } = booking || {};
   const { checkOut, isCheckingOut } = useCheckOut();
   const [deleteModal, setDeleteModal] = useState(false);
@@ -38,7 +43,8 @@ function BookingDetail() {
     "checked-in": "green",
     "checked-out": "silver",
   };
-  if (isLoading) return <Spinner />;
+
+  if (isLoading || isFetching) return <Spinner />;
   if (!booking) return <Empty resource="booking" />;
   return (
     <>
@@ -56,9 +62,6 @@ function BookingDetail() {
         <Button variation="danger" onClick={() => setDeleteModal(true)}>
           Delete Booking
         </Button>
-        <Button variation="secondary" onClick={moveBack}>
-          Back
-        </Button>
         {deleteModal && (
           <Modal onClose={() => setDeleteModal(false)}>
             <ConfirmDelete
@@ -71,6 +74,7 @@ function BookingDetail() {
             />
           </Modal>
         )}
+
         {status === `unconfirmed` && (
           <Button
             variation="primary"

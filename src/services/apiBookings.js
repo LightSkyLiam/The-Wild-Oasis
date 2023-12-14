@@ -6,7 +6,7 @@ export async function getBookings(filter, sortByObj, method = `eq`, page) {
   let query = supabase
     .from("bookings")
     .select(
-      "id,created_at,startDate,endDate,numNights,numGuests,status,totalPrice, guests(fullName,email) , cabins(name)",
+      "id,created_at,startDate,endDate,numNights,numGuests,status,totalPrice,isPaid,hasBreakfast,observations, guests(*) , cabins(name)",
       { count: `exact` }
     );
   if (filter) query = query[method](filter.field, filter.value);
@@ -27,6 +27,37 @@ export async function getBookings(filter, sortByObj, method = `eq`, page) {
   }
   return { data, count };
 }
+export async function addBooking(bookingData) {
+  const { guestInfoObj, bookingInfoObj } = bookingData;
+  const { data: guest, error: guestError } = await supabase
+    .from("guests")
+    .insert([{ ...guestInfoObj }])
+    .select()
+    .single();
+  if (guestError) {
+    console.error(guestError);
+    throw new Error(
+      "couldn't add guest, booking not created, please try again"
+    );
+  }
+  const { data: booking, bookingError } = await supabase
+    .from("bookings")
+    .insert([{ ...bookingInfoObj, guestId: guest.id }])
+    .select()
+    .single();
+  if (bookingError) {
+    const { deleteGuestError } = await supabase
+      .from("guests")
+      .delete()
+      .eq("id", guest.id);
+    if (deleteGuestError)
+      throw new Error(
+        "couldn't create booking and couldn't delete guest, please reach out to a manager"
+      );
+    throw new Error("couldn't create booking, guest deleted, please try again");
+  }
+}
+
 export async function getBooking(id) {
   const { data, error } = await supabase
     .from("bookings")
@@ -84,10 +115,6 @@ export async function getStaysTodayActivity() {
     )
     .order("created_at");
 
-  // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
-  // (stay.status === 'unconfirmed' && isToday(new Date(stay.startDate))) ||
-  // (stay.status === 'checked-in' && isToday(new Date(stay.endDate)))
-
   if (error) {
     console.error(error);
     throw new Error("Bookings could not get loaded");
@@ -110,8 +137,6 @@ export async function updateBooking(id, obj) {
 }
 
 export async function deleteBooking(id) {
-  console.log(id);
-  // REMEMBER RLS POLICIES
   const { data, error } = await supabase.from("bookings").delete().eq("id", id);
 
   if (error) {

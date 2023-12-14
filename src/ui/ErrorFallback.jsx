@@ -2,7 +2,6 @@ import styled from "styled-components";
 import Heading from "./Heading";
 import { GlobalStyles } from "../styles/GlobalStyled";
 import Button from "./Button";
-import { Link } from "react-router-dom";
 
 const StyledErrorFallback = styled.main`
   height: 100vh;

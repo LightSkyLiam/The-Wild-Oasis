@@ -1,6 +1,8 @@
 import { HiXMark } from "react-icons/hi2";
 import styled from "styled-components";
 import useCloseOnOutsideClick from "../hooks/useCloseOnOutsideClick";
+import Spinner from "./Spinner";
+import { useSearchParams } from "react-router-dom";
 
 const StyledModal = styled.div`
   position: fixed;
@@ -51,13 +53,21 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `;
-function Modal({ children, onClose }) {
-  const ref = useCloseOnOutsideClick(onClose, true);
-
+function Modal({ children, onClose, isLoading, deleteParam }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const closeModal = () => {
+    if (deleteParam) {
+      searchParams.delete(deleteParam);
+      setSearchParams(searchParams);
+    }
+    onClose?.();
+  };
+  const ref = useCloseOnOutsideClick(closeModal, true);
   return (
     <Overlay>
       <StyledModal ref={ref}>
-        <Button onClick={onClose}>
+        {isLoading && <Spinner />}
+        <Button onClick={closeModal}>
           <HiXMark />
         </Button>
         <div>{children}</div>

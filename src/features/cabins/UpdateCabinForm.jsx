@@ -1,4 +1,3 @@
-import { useForm } from "react-hook-form";
 import CabinForm from "./CabinForm";
 import { useEditCabin } from "./useEditCabin";
 
