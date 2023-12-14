@@ -122,7 +122,12 @@ body {
   line-height: 1.5;
   font-size: 1.6rem;
 }
-
+input[type=checkbox]{
+  box-shadow: none;
+}
+input[type=checkbox]:focus{
+  outline:none
+}
 input,
 button,
 textarea,
@@ -140,7 +145,8 @@ button {
 }
 
 select:disabled,
-input:disabled {
+input:disabled,
+textarea:disabled {
   background-color: var(--color-grey-200);
   color: var(--color-grey-500);
 }
@@ -153,7 +159,6 @@ select:focus {
   outline-offset: -1px;
 }
 
-/* Parent selector, finally 😃 */
 button:has(svg) {
   line-height: 0;
 }
@@ -184,7 +189,14 @@ img {
   /* For dark mode */
   filter: grayscale(var(--image-grayscale)) opacity(var(--image-opacity));
 }
-
+.stickToLeft{
+  margin-left: 0;
+  margin-right: auto
+}
+.stickToRight{
+  margin-left: auto;
+  margin-right: 0;
+}
 /*
 FOR DARK MODE
 

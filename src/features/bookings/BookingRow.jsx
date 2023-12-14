@@ -5,6 +5,7 @@ import {
   HiArrowDownOnSquare,
   HiArrowUpOnSquare,
   HiEye,
+  HiPencil,
   HiTrash,
 } from "react-icons/hi2";
 import styled from "styled-components";
@@ -19,7 +20,11 @@ import { formatDistanceFromNow } from "../../utils/helpers";
 import Menus from "../../ui/Menus";
 import Modal from "../../ui/Modal";
 import { useDeleteBooking } from "./useDeleteBooking";
+import GuestInfoForm from "../guests/GuestInfoForm";
+import BookingInfoForm from "./BookingInfoForm";
+import { useUpdateGuest } from "../guests/useUpdateGuest";
 import Spinner from "../../ui/Spinner";
+import { useUpdateBooking } from "./useUpdateBooking";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -48,33 +53,53 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
-function BookingRow({
-  booking: {
+function BookingRow({ booking }) {
+  const {
     id: bookingId,
     startDate,
     endDate,
     numNights,
     totalPrice,
     status,
-    guests: { fullName: guestName, email },
+    guests,
     cabins: { name: cabinName },
-  },
-}) {
+  } = booking;
+
+  const { fullName, email, nationality, nationalID, id: guestID } = guests;
   const navigate = useNavigate();
   const { checkOut, isCheckingOut } = useCheckOut();
   const [deleteModal, setDeleteModal] = useState(false);
+  const [updateGuestModal, setUpdateGuestModal] = useState(false);
+  const [updateBookingModal, setUpdateBookingModal] = useState(false);
   const { isDeletingBooking, deleteBookingbyId } = useDeleteBooking();
   const statusToTagName = {
     unconfirmed: "blue",
     "checked-in": "green",
     "checked-out": "silver",
   };
+  const { isUpdatingGuest, updateGuest } = useUpdateGuest();
+  const { isUpdatingBooking, updateBookingInfo } = useUpdateBooking();
+
+  const onUpdateGuest = (guestObj) => {
+    guestObj.guestID = guestID;
+    updateGuest(guestObj);
+    setUpdateGuestModal(false);
+  };
+
+  const onUpdateBooking = (bookingObj) => {
+    bookingObj.guestId = guestID;
+    bookingObj.bookingId = bookingId;
+    updateBookingInfo(bookingObj);
+    setUpdateBookingModal(false);
+  };
+
+  if (isUpdatingGuest || isUpdatingBooking) return <Spinner type="small" />;
   return (
     <Table.Row>
       <Cabin>{cabinName}</Cabin>
 
       <Stacked>
-        <span>{guestName}</span>
+        <span>{fullName}</span>
         <span>{email}</span>
       </Stacked>
 
@@ -105,8 +130,43 @@ function BookingRow({
           />
         </Modal>
       )}
+      {updateGuestModal && (
+        <Modal onClose={() => setUpdateGuestModal(false)}>
+          {
+            <GuestInfoForm
+              defaultValues={{ fullName, nationalID, nationality, email }}
+              onCloseModal={() => setUpdateGuestModal(false)}
+              edit={true}
+              onSubmit={onUpdateGuest}
+            />
+          }
+        </Modal>
+      )}
+      {updateBookingModal && (
+        <Modal
+          deleteParam="cabinName"
+          onClose={() => setUpdateBookingModal(false)}
+        >
+          <BookingInfoForm
+            defaultValues={{
+              isPaid: booking.isPaid,
+              totalPrice,
+              observations: booking.observations,
+              cabinId: booking.cabins.name,
+              startDate: booking.startDate.slice(0, 10),
+              endDate: booking.endDate.slice(0, 10),
+              numNights,
+              numGuests: booking.numGuests,
+              hasBreakfast: booking.hasBreakfast,
+            }}
+            onCloseModal={() => setUpdateBookingModal(false)}
+            edit={true}
+            onSubmit={onUpdateBooking}
+          />
+        </Modal>
+      )}
       <Menus.Menu>
-        <Menus.Toggle id={bookingId} />
+        <Menus.Toggle type="onLight" size="small" id={bookingId} />
         <Menus.List id={bookingId}>
           <Menus.Button
             icon={<HiEye />}
@@ -131,6 +191,19 @@ function BookingRow({
               Check Out
             </Menus.Button>
           )}
+          <Menus.Button
+            icon={<HiPencil />}
+            onClick={() => setUpdateGuestModal(true)}
+          >
+            Edit Guest
+          </Menus.Button>
+          <Menus.Button
+            icon={<HiPencil />}
+            onClick={() => setUpdateBookingModal(true)}
+          >
+            Edit Booking
+          </Menus.Button>
+
           <Menus.Button
             icon={<HiTrash />}
             onClick={() => setDeleteModal(true)}

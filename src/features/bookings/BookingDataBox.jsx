@@ -5,12 +5,21 @@ import {
   HiOutlineCheckCircle,
   HiOutlineCurrencyDollar,
   HiOutlineHomeModern,
+  HiPencil,
 } from "react-icons/hi2";
 
 import DataItem from "../../ui/DataItem";
 import { Flag } from "../../ui/Flag";
 
 import { formatDistanceFromNow, formatCurrency } from "../../utils/helpers";
+import Menus from "../../ui/Menus";
+import { useState } from "react";
+import Modal from "../../ui/Modal";
+import Spinner from "../../ui/Spinner";
+import { useUpdateGuest } from "../guests/useUpdateGuest";
+import { useUpdateBooking } from "./useUpdateBooking";
+import GuestInfoForm from "../guests/GuestInfoForm";
+import BookingInfoForm from "./BookingInfoForm";
 
 const StyledBookingDataBox = styled.section`
   /* Box */
@@ -29,7 +38,7 @@ const Header = styled.header`
   font-weight: 500;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 3rem;
 
   svg {
     height: 3.2rem;
@@ -115,9 +124,37 @@ function BookingDataBox({ booking }) {
     hasBreakfast,
     observations,
     isPaid,
-    guests: { fullName: guestName, email, country, countryFlag, nationalID },
+    id: bookingId,
+    guests,
+    guests: {
+      fullName: guestName,
+      email,
+      nationality,
+      countryFlag,
+      nationalID,
+    },
     cabins: { name: cabinName },
   } = booking;
+
+  const [updateGuestModal, setUpdateGuestModal] = useState(false);
+  const [updateBookingModal, setUpdateBookingModal] = useState(false);
+  const onUpdateGuest = (guestObj) => {
+    guestObj.guestID = guests.id;
+    updateGuest(guestObj);
+    setUpdateGuestModal(false);
+  };
+
+  const onUpdateBooking = (bookingObj) => {
+    bookingObj.guestId = guests.id;
+    bookingObj.bookingId = bookingId;
+    updateBookingInfo(bookingObj);
+    setUpdateBookingModal(false);
+  };
+
+  const { isUpdatingBooking, updateBookingInfo } = useUpdateBooking(bookingId);
+  const { isUpdatingGuest, updateGuest } = useUpdateGuest(bookingId);
+
+  if (isUpdatingBooking || isUpdatingGuest) return <Spinner />;
 
   return (
     <StyledBookingDataBox>
@@ -136,11 +173,76 @@ function BookingDataBox({ booking }) {
             : formatDistanceFromNow(startDate)}
           ) &mdash; {format(new Date(endDate), "EEE, MMM dd yyyy")}
         </p>
+        <Menus>
+          <Menus.Menu className="stickToRight">
+            <Menus.Toggle
+              className="stickToRight"
+              size="medium"
+              type="onDark"
+              id={bookingId}
+            />
+            <Menus.List id={bookingId}>
+              <Menus.Button
+                icon={<HiPencil />}
+                onClick={() => setUpdateGuestModal(true)}
+              >
+                Edit Guest
+              </Menus.Button>
+              <Menus.Button
+                icon={<HiPencil />}
+                onClick={() => setUpdateBookingModal(true)}
+              >
+                Edit Booking
+              </Menus.Button>
+            </Menus.List>
+          </Menus.Menu>
+        </Menus>
       </Header>
-
+      {updateGuestModal && (
+        <Modal onClose={() => setUpdateGuestModal(false)}>
+          {
+            <GuestInfoForm
+              defaultValues={{
+                fullName: guestName,
+                nationalID: nationalID,
+                nationality,
+                email,
+              }}
+              onCloseModal={() => setUpdateGuestModal(false)}
+              edit={true}
+              onSubmit={onUpdateGuest}
+            />
+          }
+        </Modal>
+      )}
+      {updateBookingModal && (
+        <Modal
+          deleteParam="cabinName"
+          onClose={() => setUpdateBookingModal(false)}
+        >
+          <BookingInfoForm
+            onSubmit={onUpdateBooking}
+            defaultValues={{
+              isPaid,
+              totalPrice,
+              observations,
+              cabinId: cabinName,
+              startDate: startDate.slice(0, 10),
+              endDate: endDate.slice(0, 10),
+              numGuests,
+              numNights,
+              hasBreakfast,
+            }}
+            edit={true}
+            onCloseModal={() => setUpdateBookingModal(false)}
+          />
+        </Modal>
+      )}
       <Section>
         <Guest>
-          {countryFlag && <Flag src={countryFlag} alt={`Flag of ${country}`} />}
+          {countryFlag && (
+            <Flag src={countryFlag} alt={`Flag of ${nationality}`} />
+          )}
           <p>
             {guestName} {numGuests > 1 ? `+ ${numGuests - 1} guests` : ""}
           </p>

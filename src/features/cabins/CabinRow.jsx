@@ -75,7 +75,7 @@ function CabinRow({ cabin }) {
         )}
         <div>
           <Menus.Menu>
-            <Menus.Toggle id={cabinId} />
+            <Menus.Toggle type="onLight" size="small" id={cabinId} />
             <Menus.List id={cabinId}>
               <Menus.Button
                 disabled={isDuplicating}

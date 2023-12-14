@@ -91,7 +91,6 @@ function CabinForm({
       </FormRow>
 
       <FormRow>
-        {/* type is an HTML attribute! */}
         <Button
           onClick={() => onCloseModal?.()}
           variation="secondary"
@@ -99,7 +98,7 @@ function CabinForm({
         >
           Cancel
         </Button>
-        <Button disabled={isLoading}>
+        <Button type="submit" disabled={isLoading}>
           {isLoading ? `Loading...` : edit ? `Edit Cabin` : `Add cabin`}
         </Button>
       </FormRow>

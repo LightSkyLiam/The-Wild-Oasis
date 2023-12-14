@@ -9,6 +9,23 @@ export const getCabins = async () => {
   return data;
 };
 
+export const getCabinInfoByName = async (cabinName) => {
+  if (cabinName === null) return;
+  const { data: cabinInfo, error } = await supabase
+    .from("cabins")
+    .select("*")
+    .eq("name", cabinName)
+    .single();
+  if (error) {
+    console.error(error.message);
+    if (error.code === "PGRST116")
+      throw new Error(`No cabin found for this cabin name`);
+    throw new Error(`There Was An Error Fetching The Data, Please Try Again`);
+  }
+
+  return cabinInfo;
+};
+
 const deleteImage = async (imageName) => {
   const { data, error } = await supabase.storage
     .from(`cabin-images`)
@@ -54,6 +71,7 @@ const addCabinApi = async (cabinObj) => {
     .single();
   return { data, error };
 };
+
 export const addCabin = async (cabinObj) => {
   const { imageName, imagePath } = createImageInfo(cabinObj.image.name);
   const storageError = await uploadImage(imageName, cabinObj.image);

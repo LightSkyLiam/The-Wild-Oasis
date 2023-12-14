@@ -19,13 +19,27 @@ const StyledToggle = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    background-color: var(--color-grey-100);
+    background-color: ${(props) =>
+      props.type === "onLight"
+        ? "var(--color-grey-100)"
+        : "var(--color-brand-600)"};
   }
-
+  &:focus {
+    outline: 2px solid
+      ${(props) =>
+        props.type === "onLight"
+          ? "var(--color-brand-600)"
+          : "var(--color-brand-600)"};
+  }
   & svg {
-    width: 2.4rem;
-    height: 2.4rem;
-    color: var(--color-grey-700);
+    width: ${(props) =>
+      props.size === "small" ? "2.4rem !important" : "3rem !important"};
+    height: ${(props) =>
+      props.size === "small" ? "2.4rem !important" : "3rem !important"};
+    color: ${(props) =>
+      props.type === "onLight"
+        ? "var(--color-grey-700)"
+        : "var(--color-grey-100)"};
   }
 `;
 
@@ -35,9 +49,15 @@ const StyledList = styled.ul`
   box-shadow: var(--shadow-md);
   border-radius: var(--border-radius-md);
   width: max-content;
-
   right: 32px;
   top: 0;
+  & span {
+    font-size: 1.4rem !important;
+    font-family: Poppins, sans-serif !important;
+    margin: 0 !important;
+    color: var(--color-grey-700);
+    font-weight: 400;
+  }
 `;
 const StyledButton = styled.button`
   width: 100%;
@@ -57,26 +77,29 @@ const StyledButton = styled.button`
   }
 
   & svg {
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 1.6rem !important;
+    height: 1.6rem !important;
     color: var(--color-grey-400);
     transition: all 0.3s;
   }
 `;
 
 const MenusContext = createContext();
-function Menus({ children }) {
+function Menus({ children, className }) {
   const [openId, setOpenId] = useState(``);
   const close = () => setOpenId(``);
   const open = setOpenId;
 
   return (
-    <MenusContext.Provider value={{ openId, close, open }}>
+    <MenusContext.Provider
+      className={className && className}
+      value={{ openId, close, open }}
+    >
       {children}
     </MenusContext.Provider>
   );
 }
-function Toggle({ id }) {
+function Toggle({ id, disabled, size, type, className }) {
   const { openId, close, open } = useContext(MenusContext);
 
   const handleClick = (e) => {
@@ -85,7 +108,13 @@ function Toggle({ id }) {
     openId === `` || openId !== id ? open(id) : close();
   };
   return (
-    <StyledToggle onClick={handleClick}>
+    <StyledToggle
+      className={className && className}
+      size={size}
+      type={type}
+      disabled={disabled}
+      onClick={handleClick}
+    >
       <HiEllipsisVertical />
     </StyledToggle>
   );
@@ -113,6 +142,10 @@ function Button({ children, icon, disabled = false, onClick }) {
 }
 Menus.Menu = Menu;
 Menus.Toggle = Toggle;
+Menus.Toggle.defaultProps = {
+  type: "onLight",
+  size: "small",
+};
 Menus.List = List;
 Menus.Button = Button;
 export default Menus;
