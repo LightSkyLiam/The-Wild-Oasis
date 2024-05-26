@@ -40,7 +40,7 @@ export async function addBooking(bookingData) {
       "couldn't add guest, booking not created, please try again"
     );
   }
-  const { data: booking, bookingError } = await supabase
+  const { data: booking, error: bookingError } = await supabase
     .from("bookings")
     .insert([{ ...bookingInfoObj, guestId: guest.id }])
     .select()

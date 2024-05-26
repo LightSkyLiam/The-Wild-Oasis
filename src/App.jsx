@@ -14,6 +14,7 @@ import { Toaster } from "react-hot-toast";
 import Booking from "./pages/Booking";
 import CheckIn from "./pages/CheckIn";
 import { DarkModeProvider } from "./Contexts/DarkModeContext";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

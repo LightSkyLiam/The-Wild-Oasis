@@ -14,8 +14,7 @@ function BookingForm({ onCloseModal }) {
     setBookingInfo,
     guestInfo: guestInfoObj,
   } = useBookingFormInfo();
-
-  const onSubmitBookingForm = async (bookingInfoObj) => {
+  const onSubmitBookingForm = (bookingInfoObj) => {
     createBooking({ guestInfoObj, bookingInfoObj });
     reset();
     onCloseModal();

@@ -88,7 +88,7 @@ function BookingInfoForm({
   useEffect(() => {
     if (cabinInfoError && !cabinInfoError?.message?.includes(`["cabin",null]`))
       setError("cabinId", {
-        message: "Couldn't Find Cabin, Please Try Againnnnnnnnnnnnn",
+        message: "Couldn't Find Cabin, Please Try Again",
       });
   }, [setError, cabinInfoError]);
 
@@ -106,6 +106,8 @@ function BookingInfoForm({
         delete values.cabinId;
         const bookingInfoObj = {
           ...values,
+          hasBreakfast: !!values.hasBreakfast,
+          isPaid: !!values.isPaid,
           numNights,
           numGuests: +numGuests,
           status: `unconfirmed`,
@@ -152,7 +154,7 @@ function BookingInfoForm({
         />
       </FormRow>
       <FormRow label="Number of Nights">
-        <p>{isNaN(numNights) ? `` : numNights}</p>
+        <p>{isNaN(numNights) || numNights < 0 ? `` : numNights}</p>
       </FormRow>
       <FormRow label="Number of Guests" error={errors?.numGuests?.message}>
         <Input
